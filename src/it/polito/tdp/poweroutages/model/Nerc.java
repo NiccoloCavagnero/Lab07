@@ -48,10 +48,5 @@ public class Nerc {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(value);
-		return builder.toString();
-	}
+	
 }

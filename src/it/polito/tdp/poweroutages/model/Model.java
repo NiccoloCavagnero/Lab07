@@ -38,35 +38,40 @@ public class Model {
 	}
 	
 	public List<PowerOutage> doWorstCaseAnalysis(int maxYears,int maxHours, Nerc nerc) {
-		this.solution = null;
 		powerOutagesNercList = new ArrayList<PowerOutage>();
-		
+		best = 0;
 		for ( PowerOutage po : powerOutagesList )
-			if ( po.getNerc().equals(nerc) )
+			if ( po.getNerc().equals(nerc) ) {
 				powerOutagesNercList.add(po);
+			}
 		
 		this.maxYears = maxYears;
 		this.maxHours = maxHours;
 		solution = new ArrayList<PowerOutage>();
-		recursion(solution);
+		
+		recursion(new ArrayList<PowerOutage>());
+		
+		//System.out.println(sumHours(solution));
 		
 		return solution;
 	}
 	
 	private void recursion(List<PowerOutage> partial) {
 		
-		if ( sumAffectedCustomers(partial) > best ) {
+		if ( sumAffectedCustomers(partial) >= best ) {
 			best = sumAffectedCustomers(partial);
-			solution = partial;
+			solution = new ArrayList<PowerOutage>(partial);
 		}
 		
 		for ( PowerOutage po : powerOutagesNercList ) {
-			partial.add(po);
 			
 			if ( !partial.contains(po) ) {
+				partial.add(po);
 				
-				if ( checkHours(partial) && checkYears(partial) ) 
+				if ( checkYears(partial) && checkHours(partial) ) {
+					//System.out.println(sumHours(partial));
 					recursion(partial);
+				}
 				
 				partial.remove(po);
 			}
@@ -76,32 +81,31 @@ public class Model {
 	public int sumAffectedCustomers(List<PowerOutage> partial) {
 		int sum = 0;
 		
-		if ( partial.size() > 2 )
-		  for ( PowerOutage po : partial) {
+		
+		  for ( PowerOutage po : partial) 
 			sum += po.getCustomersAffected();
-		  }
+		  
 		
 		return sum;
 	}
 	
-	public long sumHours(List<PowerOutage> partial) {
-        long duration = 0;
+	public int sumHours(List<PowerOutage> partial) {
+        int duration = 0;
 		
 		for ( PowerOutage po : partial ) {
 			duration += po.getDuration();
 		}
+		//System.out.println("+++++++"+duration);
 		return duration;
 	}
 	
 	private boolean checkHours(List<PowerOutage> partial) {
-		long duration = 0;
+		int duration = this.sumHours(partial);
 		
-		for ( PowerOutage po : partial ) {
-			duration += po.getDuration();
-		}
-		
-		if ( duration <= maxHours )
+		if ( duration <= maxHours ) {
+			//System.out.println("---------"+duration);
 			return true;
+		}
 		else
 			return false;
 	}
@@ -110,26 +114,22 @@ public class Model {
 		
 		int y1 = 30000;
 		int y2 = -1;
-		
+		if ( partial.size() >= 2 ) {
 		for ( PowerOutage po : partial ) {
-			if ( y1 == 30000 )
-				y1 = po.getDateEventBegan().getYear();
 			if ( po.getDateEventBegan().getYear() <= y1 )
 				y1 = po.getDateEventBegan().getYear();
 		}
 		
 		for ( PowerOutage po : partial ) {
-			if ( y2 == -1 )
-				y2 = po.getDateEventBegan().getYear();
 			if ( po.getDateEventBegan().getYear() >= y2 )
 				y2 = po.getDateEventBegan().getYear();
 		}
-		
 		if ( (y2-y1) <= maxYears )
 			return true;
 		else
 			return false;
-		
+		}
+		return true;
 	}
 
 }

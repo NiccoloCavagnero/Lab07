@@ -62,8 +62,9 @@ public class PowerOutagesController {
 			}
 	    		
 	    	for ( Nerc n : model.getNercList() )
-	    		if ( n.getValue().compareTo(box.getValue()) == 0 )
+	    		if ( n.getValue().compareTo(box.getValue()) == 0 ) {
 	    			nerc = n;
+	    		}
 	    	
 	    	txtOut.setText(
 					String.format("Computing the worst case analysis... for %d hours and %d years", maxHours, maxYears));
@@ -75,10 +76,11 @@ public class PowerOutagesController {
 			txtOut.appendText("Tot hours of outage: " + model.sumHours(worstCase) + "\n");
 
 			for (PowerOutage po : worstCase) {
-				txtOut.appendText(String.format("%d %s %s %d %d", po.getYear(), po.getDateEventBegan(),
+				txtOut.appendText(String.format("%s %s %d %d", po.getDateEventBegan(),
 						po.getDateEventFinished(), po.getDuration(), po.getCustomersAffected()));
 				txtOut.appendText("\n");
 			}
+			
 	    }
 
 	    @FXML
