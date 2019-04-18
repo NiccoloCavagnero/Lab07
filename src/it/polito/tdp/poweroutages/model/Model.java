@@ -16,7 +16,7 @@ public class Model {
 	private int maxYears;
 	private int maxHours;
 	private int best;
-	int count = 0;
+	private int count; 
 	
 	public Model() {
 		podao = new PowerOutageDAO();
@@ -48,11 +48,15 @@ public class Model {
 		
 		this.maxYears = maxYears;
 		this.maxHours = maxHours;
+		
 		solution = new ArrayList<PowerOutage>();
+		
+		double n1 = System.nanoTime();
 		
 		recursion(new ArrayList<PowerOutage>());
 		
-		//System.out.println(sumHours(solution));
+		double n2 = System.nanoTime();
+		System.out.println(n2-n1);   // tempo di esecuzione ricorsione
 		
 		return solution;
 	}
@@ -117,6 +121,7 @@ public class Model {
 		int y1 = 30000;
 		int y2 = -1;
 		if ( partial.size() >= 2 ) {
+		
 		for ( PowerOutage po : partial ) {
 			if ( po.getDateEventBegan().getYear() <= y1 )
 				y1 = po.getDateEventBegan().getYear();
@@ -126,6 +131,7 @@ public class Model {
 			if ( po.getDateEventBegan().getYear() >= y2 )
 				y2 = po.getDateEventBegan().getYear();
 		}
+		
 		if ( (y2-y1) <= maxYears )
 			return true;
 		else
