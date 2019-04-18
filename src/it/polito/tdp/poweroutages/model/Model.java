@@ -16,6 +16,7 @@ public class Model {
 	private int maxYears;
 	private int maxHours;
 	private int best;
+	int count = 0;
 	
 	public Model() {
 		podao = new PowerOutageDAO();
@@ -58,6 +59,8 @@ public class Model {
 	
 	private void recursion(List<PowerOutage> partial) {
 		
+		
+		
 		if ( sumAffectedCustomers(partial) >= best ) {
 			best = sumAffectedCustomers(partial);
 			solution = new ArrayList<PowerOutage>(partial);
@@ -69,8 +72,9 @@ public class Model {
 				partial.add(po);
 				
 				if ( checkYears(partial) && checkHours(partial) ) {
-					//System.out.println(sumHours(partial));
+					System.out.println(count);
 					recursion(partial);
+					count++;
 				}
 				
 				partial.remove(po);
@@ -95,7 +99,6 @@ public class Model {
 		for ( PowerOutage po : partial ) {
 			duration += po.getDuration();
 		}
-		//System.out.println("+++++++"+duration);
 		return duration;
 	}
 	
@@ -103,7 +106,6 @@ public class Model {
 		int duration = this.sumHours(partial);
 		
 		if ( duration <= maxHours ) {
-			//System.out.println("---------"+duration);
 			return true;
 		}
 		else
